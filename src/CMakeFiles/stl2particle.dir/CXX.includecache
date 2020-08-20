@@ -15,11 +15,13 @@ list
 -
 vector
 -
+string
+-
 CGAL/Exact_predicates_inexact_constructions_kernel.h
 -
 CGAL/Exact_predicates_exact_constructions_kernel.h
 -
-CGAL/Simple_cartesian.h
+CGAL/Vector_3.h
 -
 CGAL/Surface_mesh.h
 -
