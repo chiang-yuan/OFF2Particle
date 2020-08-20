@@ -2,9 +2,6 @@
 STL2Particle
 
 Yuan Chiang (20th/Aug/2020)
-
-Adapted from CGAL 5.0.3 example - AABB Tree
-Author(s) : Camille Wormser, Pierre Alliez
 */
 
 #include <iostream>
