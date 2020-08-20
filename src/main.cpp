@@ -1,4 +1,11 @@
-// Author(s) : Camille Wormser, Pierre Alliez
+/*
+STL2Particle
+
+Yuan Chiang (20th/Aug/2020)
+
+Adapted from CGAL 5.0.3 example - AABB Tree
+Author(s) : Camille Wormser, Pierre Alliez
+*/
 
 #include <iostream>
 #include <fstream>
@@ -23,18 +30,9 @@ typedef K::Triangle_3 Triangle;
 typedef CGAL::Surface_mesh<Point> Mesh;
 
 typedef std::list<Triangle>::iterator Iterator;
-// typedef CGAL::AABB_triangle_primitive<K, Iterator> Primitive;
-// typedef CGAL::AABB_traits<K, Primitive> AABB_triangle_traits;
-// typedef CGAL::AABB_tree<AABB_triangle_traits> Tree;
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
-
-/////
-
-#include <CGAL/AABB_face_graph_triangle_primitive.h>
-
-// typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
 
 int main(int argc, char* argv[])
 {
@@ -50,25 +48,10 @@ int main(int argc, char* argv[])
     Mesh mesh;
     input >> mesh;
     Tree tree(faces(mesh).first, faces(mesh).second, mesh);
-    // std::list<Triangle> triangles;
-    // triangles.push_back(Triangle(a,b,c));
-    // triangles.push_back(Triangle(a,b,d));
-    // triangles.push_back(Triangle(a,d,c));
 
-    // constructs AABB tree
-    // Tree tree(triangles.begin(),triangles.end());
-
-    // counts #intersections
     Ray ray_query(e,f);
     std::cout << tree.number_of_intersected_primitives(ray_query)
         << " intersections(s) with ray query" << std::endl;
-
-    // compute closest point and squared distance
-    // Point point_query(2.0, 2.0, 2.0);
-    // Point closest_point = tree.closest_point(point_query);
-    // std::cerr << "closest point is: " << closest_point << std::endl;
-    // FT sqd = tree.squared_distance(point_query);
-    // std::cout << "squared distance: " << sqd << std::endl;
 
     return EXIT_SUCCESS;
 }
