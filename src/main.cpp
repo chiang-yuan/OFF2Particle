@@ -33,6 +33,7 @@ typedef K::Ray_3 Ray;
 typedef K::Line_3 Line;
 typedef K::Point_3 Point;
 typedef K::Triangle_3 Triangle;
+typedef CGAL::Polyhedron_3<K> Polyhedron;
 
 typedef CGAL::Surface_mesh<Point> Mesh;
 
@@ -60,13 +61,13 @@ int main(int argc, char* argv[])
     input >> mesh;
     Tree tree(faces(mesh).first, faces(mesh).second, mesh);
 
-    // // define polyhedron to hold convex hull
-    // CGAL::Polyhedron_3<CGAL::Exact_predicates_inexact_constructions_kernel> poly;
-    //
-    // // compute convex hull of non-collinear points
+    // define polyhedron to hold convex hull
+    Polyhedron poly;
+
+    // compute convex hull of non-collinear points
     // CGAL::convex_hull_3(vertices(mesh).begin(), vertices(mesh).end(), poly);
-    //
-    // std::cout << "The convex hull contains " << poly.size_of_vertices() << " vertices" << std::endl;
+
+    std::cout << "The convex hull contains " << poly.size_of_vertices() << " vertices" << std::endl;
 
 
 
