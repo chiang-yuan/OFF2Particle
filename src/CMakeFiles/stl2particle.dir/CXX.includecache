@@ -15,6 +15,10 @@ list
 -
 vector
 -
+CGAL/Exact_predicates_inexact_constructions_kernel.h
+-
+CGAL/Exact_predicates_exact_constructions_kernel.h
+-
 CGAL/Simple_cartesian.h
 -
 CGAL/Surface_mesh.h
@@ -26,5 +30,9 @@ CGAL/AABB_traits.h
 CGAL/AABB_triangle_primitive.h
 -
 CGAL/AABB_face_graph_triangle_primitive.h
+-
+CGAL/Polyhedron_3.h
+-
+CGAL/convex_hull_3.h
 -
 
