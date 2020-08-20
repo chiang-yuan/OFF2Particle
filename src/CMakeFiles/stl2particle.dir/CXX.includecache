@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/swclab/Documents/Research/STL2Particle/src/main.cpp
+iostream
+-
+fstream
+-
+list
+-
+vector
+-
+CGAL/Simple_cartesian.h
+-
+CGAL/Surface_mesh.h
+-
+CGAL/AABB_tree.h
+-
+CGAL/AABB_traits.h
+-
+CGAL/AABB_triangle_primitive.h
+-
+CGAL/AABB_face_graph_triangle_primitive.h
+-
+
