@@ -19,6 +19,8 @@ string
 -
 stdio.h
 -
+math.h
+-
 CGAL/Exact_predicates_inexact_constructions_kernel.h
 -
 CGAL/Exact_predicates_exact_constructions_kernel.h
@@ -26,6 +28,10 @@ CGAL/Exact_predicates_exact_constructions_kernel.h
 CGAL/Extreme_points_traits_adapter_3.h
 -
 CGAL/Vector_3.h
+-
+CGAL/Point_set_3.h
+-
+CGAL/Point_set_3/IO.h
 -
 CGAL/Surface_mesh.h
 -
