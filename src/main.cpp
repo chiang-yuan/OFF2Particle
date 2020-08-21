@@ -10,6 +10,7 @@ Yuan Chiang (20th/Aug/2020)
 #include <vector>
 #include <string>
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -58,6 +59,7 @@ typedef Mesh::Face_index face_descriptor;
 
 int main(int argc, char* argv[])
 {
+    // const char* filename = (argc > 1) ? argv[1] : "data/tetrahedron.off";
     const char* filename = (argc > 1) ? argv[1] : "data/tetrahedron.off";
     std::ifstream input(filename);
 
@@ -65,6 +67,7 @@ int main(int argc, char* argv[])
     Mesh mesh;
     if(! input || !(input >> mesh) || !mesh.is_valid()){
       std::cerr << "Not a valid off file." << std::endl;
+      return EXIT_FAILURE;
     }
 
     printf("\tNumber of vertices %10d\n", mesh.number_of_vertices());
@@ -75,10 +78,10 @@ int main(int argc, char* argv[])
 
     // Point origin(0.0, 0.0, 0.0);
 
-    double lc = 1;
-    Vector fcc_a1(0.0, 0.5, 0.5);
-    Vector fcc_a2(0.5, 0.0, 0.5);
-    Vector fcc_a3(0.5, 0.5, 0.0);
+    double lc = (argc > 2) ? atof(argv[2]) : 1.0;
+    Vector fcc_a1(0.5, 0.5, 0.0);
+    Vector fcc_a2(0.0, 0.5, 0.5);
+    Vector fcc_a3(0.5, 0.0, 0.5);
 
     printf("Computing convex hull...\n");
     // define polyhedron to hold convex hull
@@ -99,18 +102,23 @@ int main(int argc, char* argv[])
                    yc/=mesh.number_of_vertices(),
                    zc/=mesh.number_of_vertices());
 
-    // int n_a1, n_a2, n_a3;
-    int n_a1 = 0;
-    int n_a2 = 0;
-    int n_a3 = 0;
+    int nx = 0;
+    int ny = 0;
+    int nz = 0;
     for(vertex_descriptor vd : mesh.vertices()) {
       Vector vertex(centroid, coord[vd]);
-      if (abs((vertex*fcc_a1)/(fcc_a1*fcc_a1)) > n_a1)
-        n_a1 = (int)ceil(abs((vertex*fcc_a1)/(fcc_a1*fcc_a1)));
-      if (abs((vertex*fcc_a2)/(fcc_a2*fcc_a2)) > n_a2)
-        n_a2 = (int)ceil(abs((vertex*fcc_a2)/(fcc_a2*fcc_a2)));
-      if (abs((vertex*fcc_a3)/(fcc_a3*fcc_a3)) > n_a3)
-        n_a3 = (int)ceil(abs((vertex*fcc_a3)/(fcc_a3*fcc_a3)));
+      if (abs((vertex[0])/(lc)) > nx)
+        nx = (int)ceil(abs((vertex[0])/(lc)));
+      if (abs((vertex[1])/(lc)) > ny)
+        ny = (int)ceil(abs((vertex[1])/(lc)));
+      if (abs((vertex[2])/(lc)) > nz)
+        nz = (int)ceil(abs((vertex[2])/(lc)));
+      // if (abs((vertex*fcc_a1)/(fcc_a1*fcc_a1)) > n_a1)
+      //   n_a1 = (int)ceil(abs((vertex*fcc_a1)/(fcc_a1*fcc_a1)));
+      // if (abs((vertex*fcc_a2)/(fcc_a2*fcc_a2)) > n_a2)
+      //   n_a2 = (int)ceil(abs((vertex*fcc_a2)/(fcc_a2*fcc_a2)));
+      // if (abs((vertex*fcc_a3)/(fcc_a3*fcc_a3)) > n_a3)
+      //   n_a3 = (int)ceil(abs((vertex*fcc_a3)/(fcc_a3*fcc_a3)));
     }
 
 
@@ -122,7 +130,7 @@ int main(int argc, char* argv[])
     printf("\tNumber of faces    %10d\n", convex_hull.number_of_faces());
 
     std::cout << "\tCentroid of vertices is located at " << centroid << std::endl;
-    printf("\tNumber of lattices %3d %3d %3d\n", 2*n_a1+1, 2*n_a2+1, 2*n_a3+1);
+    printf("\tNumber of lattices %3d %3d %3d\n", 2*nx+1, 2*ny+1, 2*nz+1);
 
     // export convex hull
     std::ofstream output("output/convex_hull.off");
@@ -136,6 +144,11 @@ int main(int argc, char* argv[])
     // //print the number of extreme vertices
     // std::cout << "There are  " << extreme_vertices.size() << " extreme vertices in this mesh." << std::endl;
 
+    printf("Establishing AABB tree...\n");
+    Tree tree(faces(mesh).first, faces(mesh).second, mesh);
+
+    printf("Generating particles...\n");
+
     Point_set particles;
     Type_map type;
 
@@ -143,46 +156,43 @@ int main(int argc, char* argv[])
     boost::tie (type, success) = particles.add_property_map<int> ("type", 0);
     assert(success);
 
-    // particles.reserve (10); // For memory optimization
-    // for (std::size_t i = 0; i < 10; ++ i)
-    // {
-    //   Point_set::iterator it = point_set.insert (Point (double(i), double(i), double(i)));
-    //   Color c = {{ (unsigned char)(CGAL::get_default_random().get_int(0, 255)),
-    //                (unsigned char)(CGAL::get_default_random().get_int(0, 255)),
-    //                (unsigned char)(CGAL::get_default_random().get_int(0, 255)) }};
-    //   color[*it] = c;
-    //   intensity[*it] = rand() / (double)(RAND_MAX);
-    // }
+    srand (time(NULL));
 
-    for (int i = -n_a1; i <= n_a1; i++){
-      for (int j = -n_a2; j <= n_a2; j++){
-        for (int k = -n_a3; k <= n_a3; k++){
-          Point_set::iterator it = particles.insert(centroid + i*fcc_a1 + j*fcc_a2 + k*fcc_a3);
-          type[*it] = 1;
+    for (int i = -nx; i <= nx; i++){
+      for (int j = -ny; j <= ny; j++){
+        for (int k = -nz; k <= nz; k++){
+          Vector a0(i,j,k);
+
+          Vector epsilon(rand(),rand(),rand());
+          Ray ray_0(centroid + lc*a0,epsilon);
+          Ray ray_1(centroid + lc*a0 + lc*fcc_a1,epsilon);
+          Ray ray_2(centroid + lc*a0 + lc*fcc_a2,epsilon);
+          Ray ray_3(centroid + lc*a0 + lc*fcc_a3,epsilon);
+
+          if (tree.number_of_intersected_primitives(ray_0) % 2 == 1)
+            Point_set::iterator ita0 = particles.insert(centroid + lc*a0);
+          if (tree.number_of_intersected_primitives(ray_1) % 2 == 1)
+            Point_set::iterator ita1 = particles.insert(centroid + lc*a0 + lc*fcc_a1);
+          if (tree.number_of_intersected_primitives(ray_2) % 2 == 1)
+            Point_set::iterator ita2 = particles.insert(centroid + lc*a0 + lc*fcc_a2);
+          if (tree.number_of_intersected_primitives(ray_3) % 2 == 1)
+            Point_set::iterator ita3 = particles.insert(centroid + lc*a0 + lc*fcc_a3);
+          // type[*ita0] = 1;
+          // type[*ita1] = 1;
+          // type[*ita2] = 1;
+          // type[*ita3] = 1;
         }
       }
     }
     std::ofstream outxyz("output/particle.xyz");
     CGAL::write_xyz_point_set(outxyz, particles);
 
-    Vector epsilon(1.0,1.0,1.0);
-
-    Ray ray_query(centroid,epsilon);
-
-    printf("Establishing AABB tree...\n");
-    Tree tree(faces(mesh).first, faces(mesh).second, mesh);
-
-    std::cout << tree.number_of_intersected_primitives(ray_query)
-        << " intersections(s) with ray query" << std::endl;
+    //
+    //
+    // std::cout << tree.number_of_intersected_primitives(ray_query)
+    //     << " intersections(s) with ray query" << std::endl;
 
 
-
-    Point a(1.0, 0.0, 0.0);
-    Point b(0.0, 1.0, 0.0);
-    Point c(0.0, 0.0, 1.0);
-    Point d(0.0, 0.0, 0.0);
-    Point e(-1.0, 0.0, 0);
-    Point f(1, 1, 1);
     // Mesh m;
     // vertex_descriptor v0 = m.add_vertex(K::Point_3(0,2,0));
     // vertex_descriptor v1 = m.add_vertex(K::Point_3(2,2,0));
