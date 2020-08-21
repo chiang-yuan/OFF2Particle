@@ -14,6 +14,8 @@ Yuan Chiang (20th/Aug/2020)
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
+#include <CGAL/Extreme_points_traits_adapter_3.h>
+
 #include <CGAL/Vector_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
@@ -22,6 +24,7 @@ Yuan Chiang (20th/Aug/2020)
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
+
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Exact_predicates_exact_constructions_kernel EK;
@@ -50,31 +53,27 @@ int main(int argc, char* argv[])
 {
     const char* filename = (argc > 1) ? argv[1] : "data/tetrahedron.off";
     std::ifstream input(filename);
-    Mesh mesh;
+
     printf("Reading mesh from %s...\n", filename);
-    input >> mesh;
+    Mesh mesh;
+    if(! input || !(input >> mesh) || !mesh.is_valid()){
+      std::cerr << "Not a valid off file." << std::endl;
+    }
+
     printf("\tNumber of vertices %10d\n", mesh.number_of_vertices());
     printf("\tNumber of edges    %10d\n", mesh.number_of_edges());
     printf("\tNumber of faces    %10d\n", mesh.number_of_faces());
 
-    printf("Establishing AABB tree...\n");
-    Tree tree(faces(mesh).first, faces(mesh).second, mesh);
-
+    printf("Computing convex hull...\n");
     // define polyhedron to hold convex hull
-    Polyhedron convex_hull;
+    Mesh convex_hull;
 
-    // compute convex hull of non-collinear points
-    Points points, result;
-
-    // std::cout << mesh.points() << std::endl;
-    // // std::cout << mesh.vertices() << std::endl;
-    // std::cout << mesh << std::endl;
-
+    // access the vertices of
+    Points vertices;
     double xc, yc, zc;
     Mesh::Property_map<vertex_descriptor, Point> coord = mesh.points();
     for(vertex_descriptor vd : mesh.vertices()) {
-      // std::cout << coord[vd] << std::endl;
-      points.push_back(coord[vd]);
+      vertices.push_back(coord[vd]);
       xc = xc + coord[vd][0];
       yc = yc + coord[vd][1];
       zc = zc + coord[vd][2];
@@ -84,20 +83,40 @@ int main(int argc, char* argv[])
     zc/=mesh.number_of_vertices();
     Point centroid(xc, yc, zc);
 
-    Vector epsilon(1.0,1.0,1.0);
-
-    std::cout << "The centroid is located at " << centroid <<  std::endl;
+    // std::cout << "The centroid of vertices is located at " << centroid <<  std::endl;
 
     // compute convex hull of non-collinear points
-    CGAL::convex_hull_3(points.begin(), points.end(), convex_hull);
-    std::cout << "The convex hull contains " << convex_hull.size_of_vertices() << " vertices" << std::endl;
+    CGAL::convex_hull_3(vertices.begin(), vertices.end(), convex_hull);
+    std::cout << "\tThe convex hull contains " << convex_hull.number_of_vertices() << " vertices" << std::endl;
 
+    // export convex hull
     std::ofstream output("output/convex_hull.off");
     output << convex_hull;
+    
+    // //This will contain the extreme vertices
+    // std::vector<Mesh::Vertex_index> extreme_vertices;
+    // //call the function with the traits adapter for vertices
+    //
+    // CGAL::extreme_points_3(vertices(convex_hull),std::back_inserter(extreme_vertices), CGAL::make_extreme_points_traits_adapter(convex_hull.points()));
+    // //print the number of extreme vertices
+    // std::cout << "There are  " << extreme_vertices.size() << " extreme vertices in this mesh." << std::endl;
+
+    double lc = 1.0;
+    Vector fcc_a1(0.0, 0.5, 0.5);
+    Vector fcc_a2(0.5, 0.0, 0.5);
+    Vector fcc_a3(0.5, 0.5, 0.0);
+
+    Vector epsilon(1.0,1.0,1.0);
 
     Ray ray_query(centroid,epsilon);
+
+    printf("Establishing AABB tree...\n");
+    Tree tree(faces(mesh).first, faces(mesh).second, mesh);
+
     std::cout << tree.number_of_intersected_primitives(ray_query)
         << " intersections(s) with ray query" << std::endl;
+
+
 
     Point a(1.0, 0.0, 0.0);
     Point b(0.0, 1.0, 0.0);
