@@ -9,6 +9,7 @@ Yuan Chiang (20th/Aug/2020)
 #include <list>
 #include <vector>
 #include <string>
+#include <stdio.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -45,60 +46,65 @@ typedef CGAL::AABB_tree<Traits> Tree;
 typedef Mesh::Vertex_index vertex_descriptor;
 typedef Mesh::Face_index face_descriptor;
 
-
-
 int main(int argc, char* argv[])
 {
-    Point a(1.0, 0.0, 0.0);
-    Point b(0.0, 1.0, 0.0);
-    Point c(0.0, 0.0, 1.0);
-    Point d(0.0, 0.0, 0.0);
-    Point e(-1.0, 0.0, 0);
-    Point f(1, 1, 1);
-
-
-
     const char* filename = (argc > 1) ? argv[1] : "data/tetrahedron.off";
     std::ifstream input(filename);
     Mesh mesh;
+    printf("Reading mesh from %s...\n", filename);
     input >> mesh;
+    printf("\tNumber of vertices %10d\n", mesh.number_of_vertices());
+    printf("\tNumber of edges    %10d\n", mesh.number_of_edges());
+    printf("\tNumber of faces    %10d\n", mesh.number_of_faces());
+
+    printf("Establishing AABB tree...\n");
     Tree tree(faces(mesh).first, faces(mesh).second, mesh);
 
     // define polyhedron to hold convex hull
-    Polyhedron poly;
+    Polyhedron convex_hull;
 
     // compute convex hull of non-collinear points
     Points points, result;
 
-    std::cout << mesh.points() << std::endl;
-    std::cout << mesh << std::endl;
+    // std::cout << mesh.points() << std::endl;
+    // // std::cout << mesh.vertices() << std::endl;
+    // std::cout << mesh << std::endl;
 
     double xc, yc, zc;
     Mesh::Property_map<vertex_descriptor, Point> coord = mesh.points();
     for(vertex_descriptor vd : mesh.vertices()) {
-      std::cout << coord[vd] << std::endl;
+      // std::cout << coord[vd] << std::endl;
+      points.push_back(coord[vd]);
       xc = xc + coord[vd][0];
       yc = yc + coord[vd][1];
       zc = zc + coord[vd][2];
     }
-    xc/=3;
-    yc/=3;
-    zc/=3;
+    xc/=mesh.number_of_vertices();
+    yc/=mesh.number_of_vertices();
+    zc/=mesh.number_of_vertices();
     Point centroid(xc, yc, zc);
 
     Vector epsilon(1.0,1.0,1.0);
 
     std::cout << "The centroid is located at " << centroid <<  std::endl;
 
-    std::cout << "The convex hull contains " << poly.size_of_vertices() << " vertices" << std::endl;
+    // compute convex hull of non-collinear points
+    CGAL::convex_hull_3(points.begin(), points.end(), convex_hull);
+    std::cout << "The convex hull contains " << convex_hull.size_of_vertices() << " vertices" << std::endl;
 
-
+    std::ofstream output("output/convex_hull.off");
+    output << convex_hull;
 
     Ray ray_query(centroid,epsilon);
     std::cout << tree.number_of_intersected_primitives(ray_query)
         << " intersections(s) with ray query" << std::endl;
 
-
+    Point a(1.0, 0.0, 0.0);
+    Point b(0.0, 1.0, 0.0);
+    Point c(0.0, 0.0, 1.0);
+    Point d(0.0, 0.0, 0.0);
+    Point e(-1.0, 0.0, 0);
+    Point f(1, 1, 1);
     // Mesh m;
     // vertex_descriptor v0 = m.add_vertex(K::Point_3(0,2,0));
     // vertex_descriptor v1 = m.add_vertex(K::Point_3(2,2,0));
