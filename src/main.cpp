@@ -60,8 +60,8 @@ typedef Mesh::Face_index face_descriptor;
 
 int main(int argc, char* argv[])
 {
-    time_t my_time = time(NULL);
-    printf("STL2Particle starts at %s\n", ctime(&my_time));
+    time_t start_main = time(NULL);
+    printf("STL2Particle starts at %s\n", ctime(&start_main));
     const clock_t start_time = clock();
 
     const char* filename = (argc > 1) ? argv[1] : "data/tetrahedron.off";
@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
     printf("Reading mesh from %s...\n", filename);
     Mesh mesh;
     if(! input || !(input >> mesh) || !mesh.is_valid()){
-      std::cerr << "Not a valid off file." << std::endl;
+      printf("\tNot a valid off file.\n");
       return EXIT_FAILURE;
     }
 
@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
     printf("Establishing AABB tree...\n");
     Tree tree(faces(mesh).first, faces(mesh).second, mesh);
 
-    printf("Start Generating particles...\n");
+    printf("Generating particles...\r");
 
     Point_set particles;
     Type_map type;
@@ -166,7 +166,7 @@ int main(int argc, char* argv[])
       for (int j = -ny; j <= ny; j++){
         for (int k = -nz; k <= nz; k++){
           lattice_iter = lattice_iter + 1;
-          printf("\tChecking intersection... %3.0f%% \r", (double)(lattice_iter) / (double)((2*nx+1)*(2*ny+1)*(2*nz+1)) * 100.0);
+          printf("Generating particles... %3.0f%% \r", (double)(lattice_iter) / (double)((2*nx+1)*(2*ny+1)*(2*nz+1)) * 100.0);
           Vector a0(i,j,k);
           Vector epsilon(rand(),rand(),rand());
           Ray ray_0(centroid + lc*a0,epsilon);
@@ -190,10 +190,14 @@ int main(int argc, char* argv[])
       }
     }
 
-    printf("End Generating particles...\n");
+    printf("Generating particles...\n");
+    printf("\tNumer of particles %10ld\n",particles.number_of_points());
 
-    std::ofstream outxyz("output/particle.xyz");
+    const char* outfile = (argc > 3) ? argv[3] : "particles.xyz";
+    std::ofstream outxyz(outfile);
+    outxyz << "# Particle coordinates created by STL2Particle at " << ctime(&start_main) << std::endl;
     CGAL::write_xyz_point_set(outxyz, particles);
+    outxyz.close();
 
     //
     //
@@ -248,8 +252,9 @@ int main(int argc, char* argv[])
     // }
 
     const clock_t end_time = clock();
-    printf("Execution time duration: %f sec\n", float( end_time - start_time ) / CLOCKS_PER_SEC);
+    printf("Elapsed time: %f sec\n", float( end_time - start_time ) / CLOCKS_PER_SEC);
 
-    printf("STL2Particle ends at %s\n", ctime(&my_time));
+    time_t end_main = time(NULL);
+    printf("STL2Particle ends at %s\n", ctime(&end_main));
     return EXIT_SUCCESS;
 }
