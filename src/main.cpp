@@ -12,6 +12,7 @@ Yuan Chiang (20th/Aug/2020)
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -59,7 +60,10 @@ typedef Mesh::Face_index face_descriptor;
 
 int main(int argc, char* argv[])
 {
-    // const char* filename = (argc > 1) ? argv[1] : "data/tetrahedron.off";
+    time_t my_time = time(NULL);
+    printf("STL2Particle starts at %s\n", ctime(&my_time));
+    const clock_t start_time = clock();
+
     const char* filename = (argc > 1) ? argv[1] : "data/tetrahedron.off";
     std::ifstream input(filename);
 
@@ -83,9 +87,9 @@ int main(int argc, char* argv[])
     Vector fcc_a2(0.0, 0.5, 0.5);
     Vector fcc_a3(0.5, 0.0, 0.5);
 
-    printf("Computing convex hull...\n");
+    printf("Computing lattices...\n");
     // define polyhedron to hold convex hull
-    Mesh convex_hull;
+    // Mesh convex_hull;
 
     // access the vertices of
     Points vertices;
@@ -123,18 +127,18 @@ int main(int argc, char* argv[])
 
 
     // compute convex hull of non-collinear points
-    CGAL::convex_hull_3(vertices.begin(), vertices.end(), convex_hull);
+    // CGAL::convex_hull_3(vertices.begin(), vertices.end(), convex_hull);
 
-    printf("\tNumber of vertices %10d\n", convex_hull.number_of_vertices());
-    printf("\tNumber of edges    %10d\n", convex_hull.number_of_edges());
-    printf("\tNumber of faces    %10d\n", convex_hull.number_of_faces());
+    // printf("\tNumber of vertices %10d\n", convex_hull.number_of_vertices());
+    // printf("\tNumber of edges    %10d\n", convex_hull.number_of_edges());
+    // printf("\tNumber of faces    %10d\n", convex_hull.number_of_faces());
 
     std::cout << "\tCentroid of vertices is located at " << centroid << std::endl;
     printf("\tNumber of lattices %3d %3d %3d\n", 2*nx+1, 2*ny+1, 2*nz+1);
 
     // export convex hull
-    std::ofstream output("output/convex_hull.off");
-    output << convex_hull;
+    // std::ofstream output("output/convex_hull.off");
+    // output << convex_hull;
 
     // //This will contain the extreme vertices
     // std::vector<Mesh::Vertex_index> extreme_vertices;
@@ -147,7 +151,7 @@ int main(int argc, char* argv[])
     printf("Establishing AABB tree...\n");
     Tree tree(faces(mesh).first, faces(mesh).second, mesh);
 
-    printf("Generating particles...\n");
+    printf("Start Generating particles...\n");
 
     Point_set particles;
     Type_map type;
@@ -157,12 +161,13 @@ int main(int argc, char* argv[])
     assert(success);
 
     srand (time(NULL));
-
+    int lattice_iter = 0;
     for (int i = -nx; i <= nx; i++){
       for (int j = -ny; j <= ny; j++){
         for (int k = -nz; k <= nz; k++){
+          lattice_iter = lattice_iter + 1;
+          printf("\tChecking intersection... %3.0f%% \r", (double)(lattice_iter) / (double)((2*nx+1)*(2*ny+1)*(2*nz+1)) * 100.0);
           Vector a0(i,j,k);
-
           Vector epsilon(rand(),rand(),rand());
           Ray ray_0(centroid + lc*a0,epsilon);
           Ray ray_1(centroid + lc*a0 + lc*fcc_a1,epsilon);
@@ -184,6 +189,9 @@ int main(int argc, char* argv[])
         }
       }
     }
+
+    printf("End Generating particles...\n");
+
     std::ofstream outxyz("output/particle.xyz");
     CGAL::write_xyz_point_set(outxyz, particles);
 
@@ -239,6 +247,9 @@ int main(int argc, char* argv[])
     //   std::cout << p << std::endl;
     // }
 
+    const clock_t end_time = clock();
+    printf("Execution time duration: %f sec\n", float( end_time - start_time ) / CLOCKS_PER_SEC);
 
+    printf("STL2Particle ends at %s\n", ctime(&my_time));
     return EXIT_SUCCESS;
 }
