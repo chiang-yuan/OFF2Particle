@@ -6,6 +6,15 @@
 
 ## Build
 
+## Usage
+
+```
+<input file> [lattice constant] [output file]
+```
+
+### default
+`lattice constant`: 1.0
+`output file`: `particles.xyz`
 
 ## Limitation
 
