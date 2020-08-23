@@ -12,7 +12,7 @@
 <input file> [lattice constant] [output file]
 ```
 
-####Default 
+###Default 
 
 `lattice constant`: 1.0
 
