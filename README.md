@@ -12,8 +12,10 @@
 <input file> [lattice constant] [output file]
 ```
 
-### default
+####Default 
+
 `lattice constant`: 1.0
+
 `output file`: `particles.xyz`
 
 ## Limitation
