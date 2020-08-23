@@ -53,7 +53,7 @@ CMAKE_BINARY_DIR = /home/swclab/Documents/Research/STL2Particle/src
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/stl2particle.dir/all
+all: CMakeFiles/off2particle.dir/all
 
 .PHONY : all
 
@@ -63,36 +63,36 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/stl2particle.dir/clean
+clean: CMakeFiles/off2particle.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/stl2particle.dir
+# Target rules for target CMakeFiles/off2particle.dir
 
 # All Build rule for target.
-CMakeFiles/stl2particle.dir/all:
-	$(MAKE) -f CMakeFiles/stl2particle.dir/build.make CMakeFiles/stl2particle.dir/depend
-	$(MAKE) -f CMakeFiles/stl2particle.dir/build.make CMakeFiles/stl2particle.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/swclab/Documents/Research/STL2Particle/src/CMakeFiles --progress-num=1,2 "Built target stl2particle"
-.PHONY : CMakeFiles/stl2particle.dir/all
+CMakeFiles/off2particle.dir/all:
+	$(MAKE) -f CMakeFiles/off2particle.dir/build.make CMakeFiles/off2particle.dir/depend
+	$(MAKE) -f CMakeFiles/off2particle.dir/build.make CMakeFiles/off2particle.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/swclab/Documents/Research/STL2Particle/src/CMakeFiles --progress-num=1,2 "Built target off2particle"
+.PHONY : CMakeFiles/off2particle.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/stl2particle.dir/rule: cmake_check_build_system
+CMakeFiles/off2particle.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/swclab/Documents/Research/STL2Particle/src/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/stl2particle.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/off2particle.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/swclab/Documents/Research/STL2Particle/src/CMakeFiles 0
-.PHONY : CMakeFiles/stl2particle.dir/rule
+.PHONY : CMakeFiles/off2particle.dir/rule
 
 # Convenience name for target.
-stl2particle: CMakeFiles/stl2particle.dir/rule
+off2particle: CMakeFiles/off2particle.dir/rule
 
-.PHONY : stl2particle
+.PHONY : off2particle
 
 # clean rule for target.
-CMakeFiles/stl2particle.dir/clean:
-	$(MAKE) -f CMakeFiles/stl2particle.dir/build.make CMakeFiles/stl2particle.dir/clean
-.PHONY : CMakeFiles/stl2particle.dir/clean
+CMakeFiles/off2particle.dir/clean:
+	$(MAKE) -f CMakeFiles/off2particle.dir/build.make CMakeFiles/off2particle.dir/clean
+.PHONY : CMakeFiles/off2particle.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

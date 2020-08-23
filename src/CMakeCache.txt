@@ -177,7 +177,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=stl2particle
+CMAKE_PROJECT_NAME:STATIC=off2particle
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -261,6 +261,12 @@ MPFR_LIBRARIES_DIR:FILEPATH=/usr/local/lib
 boost_headers_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/boost_headers-1.71.0
 
 //Value Computed by CMake
+off2particle_BINARY_DIR:STATIC=/home/swclab/Documents/Research/STL2Particle/src
+
+//Value Computed by CMake
+off2particle_SOURCE_DIR:STATIC=/home/swclab/Documents/Research/STL2Particle/src
+
+//Value Computed by CMake
 stl2particle_BINARY_DIR:STATIC=/home/swclab/Documents/Research/STL2Particle/src
 
 //Value Computed by CMake
@@ -277,7 +283,7 @@ Boost_DEBUG-ADVANCED:INTERNAL=1
 Boost_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CGAL_Boost_USE_STATIC_LIBS
 CGAL_Boost_USE_STATIC_LIBS-ADVANCED:INTERNAL=1
-CGAL_EXECUTABLE_TARGETS:INTERNAL=stl2particle
+CGAL_EXECUTABLE_TARGETS:INTERNAL=stl2particle;off2particle
 //CGAL library is configured to use GMP
 CGAL_USE_GMP:INTERNAL=TRUE
 //CGAL library is configured to use MPFR

@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -DNDEBUG   CMakeFiles/off2particle.dir/main.cpp.o  -o off2particle  -Wl,-rpath,/usr/local/lib /usr/local/lib/libmpfr.so /usr/local/lib/libgmp.so 

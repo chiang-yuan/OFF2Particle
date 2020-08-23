@@ -61,7 +61,7 @@ typedef Mesh::Face_index face_descriptor;
 int main(int argc, char* argv[])
 {
     time_t start_main = time(NULL);
-    printf("STL2Particle starts at %s\n", ctime(&start_main));
+    printf("OFF2Particle starts at %s\n", ctime(&start_main));
     const clock_t start_time = clock();
 
     const char* filename = (argc > 1) ? argv[1] : "data/tetrahedron.off";
@@ -255,6 +255,6 @@ int main(int argc, char* argv[])
     printf("Elapsed time: %f sec\n", float( end_time - start_time ) / CLOCKS_PER_SEC);
 
     time_t end_main = time(NULL);
-    printf("STL2Particle ends at %s\n", ctime(&end_main));
+    printf("OFF2Particle ends at %s\n", ctime(&end_main));
     return EXIT_SUCCESS;
 }
