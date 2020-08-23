@@ -1,5 +1,5 @@
 /*
-STL2Particle
+OFF2Particle
 
 Yuan Chiang (20th/Aug/2020)
 */
