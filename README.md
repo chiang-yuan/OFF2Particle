@@ -1,10 +1,12 @@
-# STL2Particle
+# OFF2Particle
 
-**STL2Particle** is a Cplusplus code using [CGAL](https://www.cgal.org/) library to convert solid into discrete element model.
+**OFF2Particle** is a Cplusplus program filling solid with particles using [CGAL](https://www.cgal.org/) library and axis-aligned-boundind-boxes (AABBs) tree algorithm. 
 
 ![CGAL](https://www.cgal.org/images/cgal_front_page_2013.png)
 
 ## Build
+
+
 
 ## Usage
 
